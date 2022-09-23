@@ -7,7 +7,7 @@
   - sampleValue
 
 - **所有名称应为实际作用的全称或缩写**，例如：  
-ParameterInput缩写为ParaIn，用于输入命令行参数  
+  - ParameterInput缩写为ParaIn，用于输入命令行参数  
 
 - **每个函数名之后须跟上函数功能的注释**
 - **函数中出现的if、for等包含条件判断的代码块，如果较为复杂，应在首行注释说明该代码块的功能**
@@ -15,3 +15,5 @@ ParameterInput缩写为ParaIn，用于输入命令行参数
   - ```python
     file=open(path,'r',encoding="UTF-8")
     ```
+- **出现加减乘除操作时，尽量不使用缩写**，例如：  
+  - a=a+1 而不是 a+=1
