@@ -21,3 +21,9 @@ class Stack:
     def push(self, item):
         self.data.append(item)
         self.size = self.size + 1
+
+
+class Operator:
+    def __init__(self):
+        self.opr = None
+        self.pri = None
