@@ -1,7 +1,7 @@
 """
-    @Author: Shay Lin & Zhiyong He
+    @Author: Shay Lin & WhiteDemon
     @Date: 2022/9/23
-    @Copyright: Shay Lin & Zhiyong He
+    @Copyright: Shay Lin & WhiteDemon
     @Description:
 """
 import os.path
@@ -22,61 +22,50 @@ def ParaIn():  # 读取命令行参数并检查
                 exeCount = int(sys.argv[i + 1])
             except IndexError:
                 print("[-]缺少参数，请输入自然数")
-            #   exit(0)                         #一遇到错误或异常情况就退出？
             except ValueError:
                 print("[-]参数不合法，应为自然数")
-            #   exit(0)
         elif sys.argv[i] == "-r":           #代表后面的参数为数值范围
             try:
                 numRange = int(sys.argv[i + 1])
             except IndexError:
                 print("[-]缺少参数")
-            #   exit(0)
             except ValueError:
                 print("[-]参数不合法，应为自然数")
-            #   exit(0)
         elif sys.argv[i] == "-e":           #代表后面的参数为题目文件的路径
             try:
                 exePath = sys.argv[i + 1]
             except IndexError:
                 print("[-]缺少参数")
-            #   exit(0)
-            #if not os.path.exists(exePath):        #直接在这里检查文件是否存在？
-            #    print("[-]题目路径不存在")
-            #    exit(0)
         elif sys.argv[i] == "-a":           #代表后面的参数为答案文件的路径
             try:
                 ansPath = sys.argv[i + 1]
             except IndexError:
                 print("[-]缺少参数")
-            #if not os.path.exists(ansPath):        #直接在这里检查文件是否存在？
-            #    print("[-]答案路径不存在")
-            #    exit(0)
         else:
             print("[-]参数不合法")
             exit(0)
+        ParaCheck(exeCount,numRange,exePath,ansPath)
+        return exeCount,numRange,exePath,ansPath
 
 
 
 
 
 
-def ParaCheck(exeCount, numRange, exePath, ansPath):   #或许不用检查exeCount和numRange?只需检查文件路径，
-                                                        # 然后检查直接在ParaIn里检查，不用另写函数
+def ParaCheck(exeCount, numRange, exePath, ansPath):
     if (exeCount is None or numRange is None) and \
-            (exePath is not None and ansPath is not None):
+            (exePath is not None and ansPath is not None):   #为生成题目的命令时，两个路径应为None，检查另外两个参数是否有参数为空
         print("[-]题目个数或数值范围未给定，请检查参数是否正确")
         exit(0)
-    if not os.path.exists(exePath):
-        print("[-]题目路径不存在")
-        exit(0)
-    if not os.path.exists(ansPath):
-        print("[-]答案路径不存在")
-        exit(0)
-    if exeCount and numRange and exePath and ansPath:
-        print("[-]参数过多，请减少参数数目")
+    elif (exeCount is  None and numRange is  None):    #为对答案的命令时，exeCount和numRange应为None，检查两个路径是否有一个为空
+         if not os.path.exists(exePath):
+            print("[-]题目路径不存在")
+            exit(0)
+         if not os.path.exists(ansPath):
+            print("[-]答案路径不存在")
+            exit(0)
 
 
 if __name__ == "__main__":
-    ParaIn()
+    exeCount,numRange,exePath,ansPath = ParaIn()
     pass
