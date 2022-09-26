@@ -7,9 +7,9 @@
 
 
 class Stack:
-    def __init__(self):
-        self.data = []
-        self.size = 0
+    def __init__(self, data, size):
+        self.data = data
+        self.size = size
 
     def pop(self):
         if self.size == 0:
@@ -24,6 +24,6 @@ class Stack:
 
 
 class Operator:
-    def __init__(self):
-        self.opr = None
-        self.pri = None
+    def __init__(self, opr, pri):
+        self.opr = opr
+        self.pri = pri
