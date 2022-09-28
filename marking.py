@@ -31,6 +31,16 @@ def CheckAnswer():
         strAns = strAns.replace(" ", '')  # 去掉答案字符串中的空格
         print(listExe)
         print(strAns)
+        # 将答案strAns中的字符转为数字  ans
+        # 得出题目表达式列表listExe的计算结果 calcExe
+        # 比较结果
+        # if (ans == calcExe):
+        #   corretCount = corretCount + 1  # 答题正确的题目数加1
+        #   Corret = Corret.append(exeIndex) # 记录答题正确的题号
+        # else:
+        #   wrongCount = wrongCount + 1 # 答题错误的题目数加1
+        #   Wrong = Wrong.append(exeIndex) # 记录答题错误的题号
+        # exeIndex = exeIndex + 1 # 题号数加1
         lineExe = fileExe.readline()  # 读取题目文件的下一行
         lineAns = fileAns.readline()  # 读取答案文件的下一行
     fileExe.close()
