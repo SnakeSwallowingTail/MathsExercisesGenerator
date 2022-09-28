@@ -10,13 +10,13 @@ corretCount = 0  # 答题正确的数量
 wrongCount = 0  # 答题错误的数量
 
 
-def CheckAnswer():
-    fileExe = open("example_exercises.txt", "r", encoding="UTF-8")
-    fileAns = open("example_answers.txt", "r", encoding="UTF-8")
+def CheckAnswer(exePath, ansPath):
+    fileExe = open(exePath, "r", encoding="UTF-8")
+    fileAns = open(ansPath, "r", encoding="UTF-8")
     lineExe = fileExe.readline()
     lineAns = fileAns.readline()
     exeIndex = 1  # 用于记录题号
-    while (lineExe and lineAns):
+    while lineExe and lineAns:
         strExe = lineExe
         strAns = lineAns
         listExe = strExe.split(" ")  # 对表达式做去空格处理
@@ -32,9 +32,31 @@ def CheckAnswer():
         print(listExe)
         print(strAns)
         # 将答案strAns中的字符转为数字  ans
+        firstIndex = strAns.find('\'')  # 用于判断是否为带分数，若是，则返回该符号所在位置，默认为-1
+        secondIndex = strAns.find('/')  # 用于判断是否为分数，若是，则返回该符号所在位置，默认为-1
+        # print(firstIndex)
+        # print(secondIndex)
+        if not firstIndex == -1:  # 为带分数时
+            num1 = int(strAns[:firstIndex])
+            # print(num1)
+            num2 = int(strAns[firstIndex + 1:secondIndex])
+            # print(num2)
+            num3 = int(strAns[secondIndex + 1:])
+            # print(num3)
+            ans = (num1 * num3 + num2) / num3
+            print(ans)
+        elif not secondIndex == -1:  # 为分数时
+            num1 = int(strAns[:secondIndex])
+            num2 = int(strAns[secondIndex + 1:])
+            ans = num1 / num2
+            print(ans)
+        else:  # 为整数时
+            ans = int(strAns)
+            print(ans)
+
         # 得出题目表达式列表listExe的计算结果 calcExe
         # 比较结果
-        # if (ans == calcExe):
+        # if ans == calcExe:
         #   corretCount = corretCount + 1  # 答题正确的题目数加1
         #   Corret = Corret.append(exeIndex) # 记录答题正确的题号
         # else:
@@ -48,4 +70,4 @@ def CheckAnswer():
 
 
 if __name__ == "__main__":
-    CheckAnswer()
+    CheckAnswer("example_exercises.txt", "example_answers.txt")
