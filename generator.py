@@ -36,11 +36,14 @@ def OprGenerator():
             opr.pri = 2
             hPri = hPri + 1
         oprList.append(opr)
-    if hPri == 0:  # 如果操作符全部为低优先级运算符（+、-）则不生成括号
-        brackets = 0
-    else:
-        brackets = random.randint(0, 1)
+    brackets = random.randint(0, 1)
     return oprNum, oprList, brackets
+
+
+def gcd(a, b):  # 求最大公约数
+    while a != 0:
+        a, b = b % a, a
+    return b
 
 
 def NumGenerator(oprNum, r):
@@ -48,15 +51,13 @@ def NumGenerator(oprNum, r):
     numList = []
     for i in range(oprNum + 1):
         # 本程序中设定每个参与运算的数字为分数的概率为20%
-        isFraction = random.randint[1, 100]
+        isFraction = random.randint(1, 100)
         if 80 <= isFraction <= 100:
             num = ""
             denominator = random.randrange(2, r)  # 生成分母
             # 分子生成前先设定为和分母互质的数
-            numerator = r + 1
-            while denominator % numerator == 0 or numerator == r + 1:  # 如果分母和分子不互质则重新生成分子
-                if numerator == r + 1:
-                    numerator = random.randrange(1, denominator)
+            numerator = random.randrange(1, denominator)
+            while gcd(denominator, numerator) != 1:  # 如果分母和分子不互质则重新生成分子
                 numerator = random.randrange(1, denominator)
             num = num + str(numerator) + "/" + str(denominator)
             numList.append(num)
@@ -75,31 +76,27 @@ def ExGenerator(n, r):  # 生成题目
         oprIndex = 0
         numIndex = 0
         if brackets != 0:
-            if oprNum == 2:
-                if oprList[oprIndex].pri == 1:
-                    exer.append("(")
-                    exer.append(numList[0])
-                    exer.append(oprList[0])
-                    exer.append(numList[1])
+            lBF = False
+            rBF = False
+            while numIndex <= oprNum:
+                if lBF is False:
+                    flag1 = random.randint(1, 10)
+                    if 3 < flag1 <= 10:
+                        exer.append("(")
+                        lBF = True
+                exer.append(numList[numIndex])
+                numIndex = numIndex + 1
+                if lBF is True and rBF is False and exer.index("(") != exer.index(numList[numIndex - 1]) - 1:
+                    flag2 = random.randint(1, 10)
+                    if 3 < flag2 <= 10:
+                        exer.append(")")
+                        rBF = True
+                if oprIndex == oprNum and lBF is True and rBF is False:
                     exer.append(")")
-                    exer.append(oprList[1])
-                    exer.append(numList[2])
-                else:
-                    exer.append(numList[0])
-                    exer.append(oprList[0])
-                    exer.append("(")
-                    exer.append(numList[1])
-                    exer.append(oprList[1])
-                    exer.append(numList[2])
-                    exer.append(")")
-
-            else:
-                oprZip = []
-                priZip = []
-                for i in range(3):
-                    oprZip.append(oprList[i].opr)
-                    priZip.append(oprList[i].pri)
-
+                    rBF = True
+                if oprIndex < oprNum:
+                    exer.append(oprList[oprIndex])
+                    oprIndex = oprIndex + 1
         else:
             while numIndex <= oprNum:
                 exer.append(numList[numIndex])
@@ -114,11 +111,16 @@ def ExGenerator(n, r):  # 生成题目
         if HashCheck(exer):  # 如果检查出重复则重新生成
             count = count - 1
             continue
-        else:
-            pass
-        AnsGenerator(exer)
-        exer = exer + "="
-        " ".join(exer)
+        AnsGenerator(exer, count)
+        # exer = exer + "="
+        for item in exer:
+            if type(item) is str or type(item) is int:
+                print(item, end=" ")
+            else:
+                print(item.opr, end=" ")
+        print()
+        f = open("./exersices.txt", "w+", encoding="UTF-8")
+        f.close()
 
 
 def CalcCheck(rpn):  # 运算过程检查,筛出含有负数运算过程的题目
@@ -141,6 +143,8 @@ def CalcCheck(rpn):  # 运算过程检查,筛出含有负数运算过程的题�
                 n = n1 * n2
             else:
                 n = n1 / n2
+                if n2 == 0:
+                    return True
             if n < 0:
                 return True
             s.push(n)
@@ -167,15 +171,20 @@ def HashCheck(rpn):  # 对生成的题目进行哈希并检查是否重复
     return False
 
 
-def AnsGenerator(e):  # 生成答案
-    return False
-
-
-def RPNBuild(e):
+def AnsGenerator(rpn, n):  # 生成答案
+    f = open("./answers.txt", "w+", encoding="UTF-8")
+    f.close()
     pass
 
 
+def RPNBuild(e):
+    rpn = []
+    return rpn
+
+
 if __name__ == "__main__":
-    print(HashCheck([9, 9, 9, 9, Operator(opr="÷", pri=1), Operator(opr="÷", pri=1), Operator(opr="÷", pri=1)]))
-    print(HashCheck([9, 9, 9, Operator(opr="÷", pri=1), 9, Operator(opr="÷", pri=1), Operator(opr="÷", pri=1)]))
+    ExGenerator(10000, 10)
+
+    """print(HashCheck([9, 9, 9, 9, Operator(opr="÷", pri=1), Operator(opr="÷", pri=1), Operator(opr="÷", pri=1)]))
+    print(HashCheck([9, 9, 9, Operator(opr="÷", pri=1), 9, Operator(opr="÷", pri=1), Operator(opr="÷", pri=1)]))"""
     pass

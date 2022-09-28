@@ -7,7 +7,7 @@
 
 
 class Stack:
-    def __init__(self, data, size):
+    def __init__(self, data=None, size=None):
         self.data = data
         self.size = size
 
@@ -24,6 +24,6 @@ class Stack:
 
 
 class Operator:
-    def __init__(self, opr, pri):
+    def __init__(self, opr=None, pri=None):
         self.opr = opr
         self.pri = pri
