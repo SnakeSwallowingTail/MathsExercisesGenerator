@@ -39,7 +39,7 @@ def OprGenerator():
     return oprNum, oprList, brackets
 
 
-def gcd(a, b):  # 求最大公约数
+def GCD(a, b):  # 求最大公约数
     while a != 0:
         a, b = b % a, a
     return b
@@ -56,7 +56,7 @@ def NumGenerator(oprNum, r):
             denominator = random.randrange(2, r)  # 生成分母
             # 分子生成前先设定为和分母互质的数
             numerator = random.randrange(1, denominator)
-            while gcd(denominator, numerator) != 1:  # 如果分母和分子不互质则重新生成分子
+            while GCD(denominator, numerator) != 1:  # 如果分母和分子不互质则重新生成分子
                 numerator = random.randrange(1, denominator)
             num = num + str(numerator) + "/" + str(denominator)
             numList.append(num)
@@ -67,8 +67,9 @@ def NumGenerator(oprNum, r):
 
 
 def ExGenerator(n, r):  # 生成题目
-    f = open("./exercises.txt", "w+", encoding="UTF-8")
-    for count in range(n):
+    f = open("./exercises.txt", "w", encoding="UTF-8")
+    count = 0
+    while count < n:
         exer = []  # 题目
         RPN = []  # 逆波兰式
         oprNum, oprList, brackets = OprGenerator()
@@ -104,13 +105,14 @@ def ExGenerator(n, r):  # 生成题目
                 if oprIndex < oprNum:
                     exer.append(oprList[oprIndex])
                     oprIndex = oprIndex + 1
-        if CalcCheck(RPN):  # 如果检查出存在负数运算过程则重新生成
-            count = count - 1
+        RPN = RPNBuild(exer)
+        CC = bool()
+        CC = CalcCheck(RPN)
+        if CC is True:  # 如果检查出存在负数运算过程则重新生成
             continue
-        if HashCheck(exer):  # 如果检查出重复则重新生成
-            count = count - 1
+        if HashCheck(RPN) is True:  # 如果检查出重复则重新生成
             continue
-        for item in exer:
+        """for item in exer:
             if type(item) is str or type(item) is int:
                 print(item, end=" ")
             else:
@@ -122,7 +124,7 @@ def ExGenerator(n, r):  # 生成题目
                 print(item, end=" ")
             else:
                 print(item.opr, end=" ")
-        print()
+        print()"""
         output = ""
         for item in exer:
             if type(item) is str or type(item) is int:
@@ -130,39 +132,37 @@ def ExGenerator(n, r):  # 生成题目
             else:
                 output = output + item.opr + " "
         output = output + "="
-        """
-        AnsGenerator(exer, count)
-        # exer = exer + "="
-        
-        for item in exer:
-            if type(item) is str or type(item) is int:
-                print(item, end=" ")
-            else:
-                print(item.opr, end=" ")
-        print()
-        """
-
-        f.write(f"{count}. {output}\n")
+        ansStatus = AnsGenerator(RPN, count)
+        if ansStatus is False:
+            continue
+        f.write(f"{count + 1}. {output}\n")
+        count = count + 1
     f.close()
 
 
 def CalcCheck(rpn):  # 运算过程检查,筛出含有负数运算过程的题目
     s = Stack()  # 使用栈辅助RPN计算
-    for i in range(len(rpn)):
-        if type(rpn[i]) is Operator:  # 如果当前元素是操作符
+    for item in rpn:
+        if type(item) is Operator:  # 如果当前元素是操作符
             n2 = s.pop()  # RPN栈顶的是操作数
             n1 = s.pop()  # 第二个栈顶元素是被操作数
             # 如果是分数则进行字符串->数字的转换
             if type(n1) is str:
-                n1 = float(int(n1[0]) / int(n1[2]))
+                div1 = n1.find("/")
+                nume1 = int(n1[0:div1])
+                deno1 = int(n1[div1 + 1:])
+                n1 = nume1 / deno1
             if type(n2) is str:
-                n2 = float(int(n2[0]) / int(n2[2]))
+                div2 = n2.find("/")
+                nume2 = int(n2[0:div2])
+                deno2 = int(n2[div2 + 1:])
+                n2 = nume2 / deno2
             # 根据操作符对两数进行计算
-            if rpn[i].opr == "+":
+            if item.opr == "+":
                 n = n1 + n2
-            elif rpn[i].opr == "-":
+            elif item.opr == "-":
                 n = n1 - n2
-            elif rpn[i].opr == "×":
+            elif item.opr == "×":
                 n = n1 * n2
             else:
                 if n2 == 0:
@@ -173,7 +173,7 @@ def CalcCheck(rpn):  # 运算过程检查,筛出含有负数运算过程的题�
             # 将计算完的被操作数重新压入栈中
             s.push(n)
         else:  # 如果当前元素为数字，则压入栈
-            s.push(rpn[i])
+            s.push(item)
     return False
 
 
@@ -196,10 +196,104 @@ def HashCheck(rpn):  # 对生成的题目进行哈希并检查是否重复
     return False
 
 
-def AnsGenerator(rpn, n):  # 生成答案
-    f = open("./answers.txt", "w+", encoding="UTF-8")
-    f.close()
-    pass
+def AnsGenerator(rpn, id):  # 生成答案
+    f = open("./answers.txt", "a", encoding="UTF-8")
+    s = Stack()  # 使用栈辅助RPN计算
+    for item in rpn:
+        if type(item) is Operator:  # 如果当前元素是操作符
+            n2 = s.pop()  # RPN栈顶的是操作数
+            n1 = s.pop()  # 第二个栈顶元素是被操作数
+            # 根据操作符对两数进行计算
+            if type(n1) == type(n2) and type(n1) is int:  # 如果均为整数
+                if item.opr == "+":
+                    n = n1 + n2
+                elif item.opr == "-":
+                    n = n1 - n2
+                elif item.opr == "×":
+                    n = n1 * n2
+                else:
+                    n = str(n1) + "/" + str(n2)
+            else:
+                # 如果存在分数则将操作数全转化为分数形式
+                if type(n1) is str:
+                    div1 = n1.find("/")
+                    nume1 = int(n1[0:div1])
+                    deno1 = int(n1[div1 + 1:])
+                else:
+                    nume1 = 1
+                    deno1 = n1
+                if type(n2) is str:
+                    div2 = n2.find('/')
+                    nume2 = int(n2[0:div2])
+                    deno2 = int(n2[div2 + 1:])
+                else:
+                    nume2 = 1
+                    deno2 = n2
+                if item.opr == "+":
+                    if deno1 == deno2:
+                        n = str(nume1 + nume2) + "/" + str(deno1)
+                    else:
+                        gcd = GCD(deno1, deno2)
+                        deno = int(deno1 * deno2 / gcd)
+                        nume = int(nume1 * deno2 / gcd + nume2 * deno1 / gcd)
+                        n = str(nume) + "/" + str(deno)
+                elif item.opr == "-":
+                    if deno1 == deno2:
+                        n = str(nume1 - nume2) + "/" + str(deno1)
+                    else:
+                        gcd = GCD(deno1, deno2)
+                        deno = int(deno1 * deno2 / gcd)
+                        nume = int(nume1 * deno2 / gcd - nume2 * deno1 / gcd)
+                        n = str(nume) + "/" + str(deno)
+                elif item.opr == "×":
+                    deno = deno1 * deno2
+                    nume = nume1 * nume2
+                    n = str(nume) + "/" + str(deno)
+                else:
+                    deno = deno1 * nume2
+                    nume = nume1 * deno2
+                    n = str(nume) + "/" + str(deno)
+            # 将计算完的被操作数重新压入栈中
+            s.push(n)
+        else:  # 如果当前元素为数字，则压入栈
+            s.push(item)
+    ans = s.pop()
+    if type(ans) is str:
+        div = ans.find("/")
+        nume = int(ans[0:div])
+        deno = int(ans[div + 1:])
+        if deno <= 0 or nume < 0:
+            return False
+        if nume == deno:
+            ans = 1
+            f.write(f"{id + 1}. {ans}\n")
+            return True
+        elif nume == 0:
+            ans = 0
+            f.write(f"{id + 1}. {ans}\n")
+            return True
+        plus = None
+        if nume > deno:
+            plus = int(nume / deno)
+            nume = nume - plus * deno
+        if nume == 0:
+            ans = plus
+            f.write(f"{id + 1}. {ans}\n")
+            return True
+        gcd = GCD(nume, deno)
+        if gcd != 1:
+            nume = int(nume / gcd)
+            deno = int(deno / gcd)
+        else:
+            pass
+        if plus:
+            ans = str(plus) + "'" + str(nume) + "/" + str(deno)
+        else:
+            ans = str(nume) + "/" + str(deno)
+    else:
+        pass
+    f.write(f"{id + 1}. {ans}\n")
+    return True
 
 
 def RPNBuild(e):
@@ -213,7 +307,7 @@ def RPNBuild(e):
     for item in e:
         if item == '(':  # 如果是左括号
             s1.push(item)
-        elif (type(item) is str and len(item) == 3) or type(item) is int:  # 如果是数值
+        elif (type(item) is str and len(item) >= 3) or type(item) is int:  # 如果是数值
             s2.push(item)
         elif item != ')':  # 如果是操作符
             ele = s1.data[s1.top - 1]  # 取s1栈顶元素
@@ -228,12 +322,16 @@ def RPNBuild(e):
                         n1 = s2.pop()
                         value1 = None
                         value2 = None
+                        div1 = None
+                        div2 = None
                         if type(n1) is str:
-                            value1 = int(n1[0]) / int(n1[2])
+                            div1 = n1.find("/")
+                            value1 = int(n1[0:div1]) / int(n1[div1 + 1:])
                         elif type(n1) is int:
                             value1 = n1
                         if type(n2) is str:
-                            value2 = int(n2[0]) / int(n2[2])
+                            div2 = n2.find("/")
+                            value2 = int(n2[0:div2]) / int(n2[div2 + 1:])
                         elif type(n2) is int:
                             value2 = n2
                         if value1 and value2:
@@ -256,12 +354,16 @@ def RPNBuild(e):
                     n1 = s2.pop()
                     value1 = None
                     value2 = None
+                    div1 = None
+                    div2 = None
                     if type(n1) is str:
-                        value1 = int(n1[0]) / int(n1[2])
+                        div1 = n1.find("/")
+                        value1 = int(n1[0:div1]) / int(n1[div1 + 1:])
                     elif type(n1) is int:
                         value1 = n1
                     if type(n2) is str:
-                        value2 = int(n2[0]) / int(n2[2])
+                        div2 = n2.find("/")
+                        value2 = int(n2[0:div2]) / int(n2[div2 + 1:])
                     elif type(n2) is int:
                         value2 = n2
                     if value1 and value2:
@@ -286,12 +388,16 @@ def RPNBuild(e):
                 n1 = s2.pop()
                 value1 = None
                 value2 = None
+                div1 = None
+                div2 = None
                 if type(n1) is str:
-                    value1 = int(n1[0]) / int(n1[2])
+                    div1 = n1.find("/")
+                    value1 = int(n1[0:div1]) / int(n1[div1 + 1:])
                 elif type(n1) is int:
                     value1 = n1
                 if type(n2) is str:
-                    value2 = int(n2[0]) / int(n2[2])
+                    div2 = n2.find("/")
+                    value2 = int(n2[0:div2]) / int(n2[div2 + 1:])
                 elif type(n2) is int:
                     value2 = n2
                 if value1 and value2:
@@ -315,8 +421,4 @@ def RPNBuild(e):
 
 
 if __name__ == "__main__":
-    ExGenerator(15, 10)
-
-    """print(HashCheck([9, 9, 9, 9, Operator(opr="÷", pri=1), Operator(opr="÷", pri=1), Operator(opr="÷", pri=1)]))
-    print(HashCheck([9, 9, 9, Operator(opr="÷", pri=1), 9, Operator(opr="÷", pri=1), Operator(opr="÷", pri=1)]))"""
-    pass
+    ExGenerator(20, 10)

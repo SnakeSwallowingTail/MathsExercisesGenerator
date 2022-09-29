@@ -9,7 +9,7 @@
 class Stack:
     def __init__(self):
         self.data = list()
-        self.top = int()
+        self.top = 0
 
     def pop(self):
         if self.top == 0:
