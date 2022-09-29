@@ -186,7 +186,7 @@ def HashCheck(rpn):  # 对生成的题目进行哈希并检查是否重复
         if type(rpn[i]) == Operator:
             hash = hash + ord(rpn[i].opr) * (P ** i)
         else:
-            tmp=str(rpn[i])
+            tmp = str(rpn[i])
             for j in range(len(tmp)):
                 hash = hash + ord(tmp[j]) * (P ** i)
     for i in range(len(hashTable)):
@@ -220,15 +220,15 @@ def AnsGenerator(rpn, id):  # 生成答案
                     nume1 = int(n1[0:div1])
                     deno1 = int(n1[div1 + 1:])
                 else:
-                    nume1 = 1
-                    deno1 = n1
+                    nume1 = n1
+                    deno1 = 1
                 if type(n2) is str:
                     div2 = n2.find('/')
                     nume2 = int(n2[0:div2])
                     deno2 = int(n2[div2 + 1:])
                 else:
-                    nume2 = 1
-                    deno2 = n2
+                    nume2 = n2
+                    deno2 = 1
                 if item.opr == "+":
                     if deno1 == deno2:
                         n = str(nume1 + nume2) + "/" + str(deno1)
@@ -421,4 +421,6 @@ def RPNBuild(e):
 
 
 if __name__ == "__main__":
-    ExGenerator(10, 1919810)
+    f = open("./answers.txt", 'w', encoding="UTF-8")
+    f.close()
+    ExGenerator(1000, 100)
