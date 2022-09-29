@@ -182,13 +182,13 @@ def HashCheck(rpn):  # 对生成的题目进行哈希并检查是否重复
     hash = 0
     global hashTable
     for i in range(len(rpn)):
-        if type(rpn[i]) == int:
-            hash = hash + ord(str(rpn[i])) * (P ** i)
-        elif type(rpn[i]) == Operator:
+
+        if type(rpn[i]) == Operator:
             hash = hash + ord(rpn[i].opr) * (P ** i)
         else:
-            for j in range(len(rpn[i])):
-                hash = hash + ord(rpn[i][j]) * (P ** i)
+            tmp=str(rpn[i])
+            for j in range(len(tmp)):
+                hash = hash + ord(tmp[j]) * (P ** i)
     for i in range(len(hashTable)):
         if hash == hashTable[i]:
             return True
@@ -421,4 +421,4 @@ def RPNBuild(e):
 
 
 if __name__ == "__main__":
-    ExGenerator(20, 10)
+    ExGenerator(10, 1919810)
