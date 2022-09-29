@@ -89,7 +89,6 @@ def CheckAnswer(exePath, ansPath):
             wrongCount = wrongCount + 1  # 答题错误的题目数加1
             Wrong.append(exeIndex)  # 记录答题错误的题号
         exeIndex = exeIndex + 1  # 题号数加1
-        print('\n')
         lineExe = fileExe.readline()  # 读取题目文件的下一行
         lineAns = fileAns.readline()  # 读取答案文件的下一行
     fileExe.close()
@@ -136,4 +135,4 @@ def CalcExe(rpn):
 
 if __name__ == "__main__":
     # CheckAnswer("example_exercises.txt", "example_answers.txt")
-    CheckAnswer("exercises.txt", "answers.txt")
+    CheckAnswer("./测试样例/exer2", "./测试样例/ans2")
