@@ -4,10 +4,8 @@
     @Copyright: Shay Lin & WhiteDemon
     @Description:
 """
-Corret = []  # 答题正确题号的列表
-Wrong = []  # 答题错误题号的列表
-corretCount = 0  # 答题正确的数量
-wrongCount = 0  # 答题错误的数量
+from stack import Operator, Stack
+from generator import RPNBuild
 
 
 def CheckAnswer(exePath, ansPath):
@@ -16,21 +14,67 @@ def CheckAnswer(exePath, ansPath):
     lineExe = fileExe.readline()
     lineAns = fileAns.readline()
     exeIndex = 1  # 用于记录题号
+    Corret = []  # 答题正确题号的列表
+    Wrong = []  # 答题错误题号的列表
+    corretCount = 0  # 答题正确的数量
+    wrongCount = 0  # 答题错误的数量
     while lineExe and lineAns:
+        print("第%d题" % exeIndex)
         strExe = lineExe
         strAns = lineAns
         listExe = strExe.split(" ")  # 对表达式做去空格处理
         # 删除表达式列表中的序号和"="
         del listExe[0]
         del listExe[-1]
+        # 将表达式中的整数转为int
+        for i in range(len(listExe)):
+            item = listExe[i]
+            if item.find('/') == -1 \
+                    and (item != '+' and item != '-' and item != '×' and item != '÷' and item != '(' and item != ')'):
+                listExe[i] = int(item)
+            else:
+                pass
         # 删除答案字符串中的序号和"\n"
+        div = strAns.find('.')
+        # print(div)
         if strAns[-1] == '\n':
-            strAns = strAns[2:-1]
+            strAns = strAns[div + 1:-1]
         else:
-            strAns = strAns[2:]
+            strAns = strAns[div + 1:]
         strAns = strAns.replace(" ", '')  # 去掉答案字符串中的空格
-        print(listExe)
-        print(strAns)
+        # print(listExe)
+        # print(strAns)
+        # 将表达式列表中的运算符由字符类型转为Operator类
+        for i in range(len(listExe)):
+            opr = Operator()
+            if listExe[i] == '+':
+                opr.opr = '+'
+                opr.pri = 1
+                listExe[i] = opr
+            elif listExe[i] == '-':
+                opr.opr = '-'
+                opr.pri = 1
+                listExe[i] = opr
+            elif listExe[i] == '×':
+                opr.opr = '×'
+                opr.pri = 2
+                listExe[i] = opr
+            elif listExe[i] == '÷':
+                opr.opr = '÷'
+                opr.pri = 2
+                listExe[i] = opr
+            else:
+                pass
+        # 打印题目
+        for item in listExe:
+            if type(item) is str:
+                print(item, end=" ")
+            elif type(item) is int:
+                print(item, end=" ")
+            else:
+                print(item.opr, end=" ")
+        print()
+
         # 将答案strAns中的字符转为数字  ans
         firstIndex = strAns.find('\'')  # 用于判断是否为带分数，若是，则返回该符号所在位置，默认为-1
         secondIndex = strAns.find('/')  # 用于判断是否为分数，若是，则返回该符号所在位置，默认为-1
@@ -44,30 +88,76 @@ def CheckAnswer(exePath, ansPath):
             num3 = int(strAns[secondIndex + 1:])
             # print(num3)
             ans = (num1 * num3 + num2) / num3
-            print(ans)
+            print("所填写的答案等于:%f" %ans)
         elif not secondIndex == -1:  # 为分数时
             num1 = int(strAns[:secondIndex])
             num2 = int(strAns[secondIndex + 1:])
             ans = num1 / num2
-            print(ans)
+            print("所填写的答案等于:%f" %ans)
         else:  # 为整数时
             ans = int(strAns)
-            print(ans)
+            print("所填写的答案等于:%d" %ans)
 
         # 得出题目表达式列表listExe的计算结果 calcExe
+        # 先生成RPN
+        rpn = RPNBuild(listExe)
+        # print(rpn)
+        calcExe = CalcExe(rpn)
         # 比较结果
-        # if ans == calcExe:
-        #   corretCount = corretCount + 1  # 答题正确的题目数加1
-        #   Corret = Corret.append(exeIndex) # 记录答题正确的题号
-        # else:
-        #   wrongCount = wrongCount + 1 # 答题错误的题目数加1
-        #   Wrong = Wrong.append(exeIndex) # 记录答题错误的题号
-        # exeIndex = exeIndex + 1 # 题号数加1
+        if ans == calcExe:
+            corretCount = corretCount + 1  # 答题正确的题目数加1
+            Corret.append(exeIndex)  # 记录答题正确的题号
+        else:
+            wrongCount = wrongCount + 1  # 答题错误的题目数加1
+            Wrong.append(exeIndex)  # 记录答题错误的题号
+        exeIndex = exeIndex + 1  # 题号数加1
+        print('\n')
         lineExe = fileExe.readline()  # 读取题目文件的下一行
         lineAns = fileAns.readline()  # 读取答案文件的下一行
+    print("正确的题数:" + str(corretCount))
+    print(Corret)
+    print("错误的题数:" + str(wrongCount))
+    print(Wrong)
     fileExe.close()
     fileAns.close()
 
 
+def CalcExe(rpn):
+    # 找出逆波兰式中的分数，并将其由字符转为数字
+    for i in range(len(rpn)):
+        if type(rpn[i]) is str:
+            div = rpn[i].find('/')
+            if div == -1:
+                pass
+            else:
+                nume = int(rpn[i][:div])
+                deno = int(rpn[i][div + 1:])
+                rpn[i] = nume / deno
+        else:
+            pass
+    # print(rpn)
+    s1 = Stack()
+    for item in rpn:
+        if type(item) is Operator:
+            num2 = s1.pop()
+            num1 = s1.pop()
+            if item.opr == '+':
+                num = num1 + num2
+            elif item.opr == '-':
+                num = num1 - num2
+            elif item.opr == '×':
+                num = num1 * num2
+            else:
+                num = num1 / num2
+            s1.push(num)
+        else:
+            s1.push(item)
+    calcExe = s1.pop()
+    print("正确答案：")
+    print(calcExe)
+    return calcExe
+
+
 if __name__ == "__main__":
     CheckAnswer("example_exercises.txt", "example_answers.txt")
+    # CheckAnswer("exercises.txt", "answers.txt")

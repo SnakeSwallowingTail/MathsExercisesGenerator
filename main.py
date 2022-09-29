@@ -44,8 +44,8 @@ def ParaIn():  # 读取命令行参数并检查
         else:
             print("[-]参数不合法")
             exit(0)
-        ParaCheck(exeCount, numRange, exePath, ansPath)
-        return exeCount, numRange, exePath, ansPath
+    ParaCheck(exeCount, numRange, exePath, ansPath)
+    return exeCount, numRange, exePath, ansPath
 
 
 def ParaCheck(exeCount, numRange, exePath, ansPath):
