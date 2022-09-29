@@ -7,19 +7,21 @@
 
 
 class Stack:
-    def __init__(self, data=list(), top=int()):
-        self.data = data
-        self.top = top
+    def __init__(self):
+        self.data = list()
+        self.top = int()
 
     def pop(self):
         if self.top == 0:
             return OverflowError
         item = self.data[self.top - 1]
+        del self.data[self.top - 1]
         self.top = self.top - 1
         return item
 
     def push(self, item):
-        self.data.append(item)
+        t = self.data
+        t.append(item)
         self.top = self.top + 1
 
     def IsEmpty(self):
@@ -28,6 +30,6 @@ class Stack:
 
 
 class Operator:
-    def __init__(self, opr=str(), pri=int()):
-        self.opr = opr
-        self.pri = pri
+    def __init__(self):
+        self.opr = ""
+        self.pri = int()
