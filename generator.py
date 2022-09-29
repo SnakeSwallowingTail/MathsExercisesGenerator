@@ -112,19 +112,6 @@ def ExGenerator(n, r):  # 生成题目
             continue
         if HashCheck(RPN) is True:  # 如果检查出重复则重新生成
             continue
-        """for item in exer:
-            if type(item) is str or type(item) is int:
-                print(item, end=" ")
-            else:
-                print(item.opr, end=" ")
-        RPN = RPNBuild(exer)
-        print()
-        for item in RPN:
-            if type(item) is str or type(item) is int:
-                print(item, end=" ")
-            else:
-                print(item.opr, end=" ")
-        print()"""
         output = ""
         for item in exer:
             if type(item) is str or type(item) is int:

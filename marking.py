@@ -10,13 +10,6 @@ import os
 
 
 def CheckAnswer(exePath, ansPath):
-    # 判断两个文件是否存在
-    if not os.path.exists(exePath):
-        print("[-]题目路径不存在")
-        exit(0)
-    if not os.path.exists(ansPath):
-        print("[-]答案路径不存在")
-        exit(0)
     fileExe = open(exePath, "r", encoding="UTF-8")
     fileAns = open(ansPath, "r", encoding="UTF-8")
     lineExe = fileExe.readline()
@@ -70,18 +63,6 @@ def CheckAnswer(exePath, ansPath):
                 listExe[i] = opr
             else:
                 pass
-        '''
-        # 打印题目
-        for item in listExe:
-            if type(item) is str:
-                print(item, end=" ")
-            elif type(item) is int:
-                print(item, end=" ")
-            else:
-                print(item.opr, end=" ")
-        print()
-        '''
-        # print(listExe)
         # 将答案strAns中的字符转为数字  ans
         firstIndex = strAns.find('\'')  # 用于判断是否为带分数，若是，则返回该符号所在位置，默认为-1
         secondIndex = strAns.find('/')  # 用于判断是否为分数，若是，则返回该符号所在位置，默认为-1
@@ -89,20 +70,16 @@ def CheckAnswer(exePath, ansPath):
             num1 = int(strAns[:firstIndex])
             num2 = int(strAns[firstIndex + 1:secondIndex])
             num3 = int(strAns[secondIndex + 1:])
-            ans = round((num1 * num3 + num2) / num3 , 6)
-            # print("所填写的答案等于:%f" %ans)
+            ans = round((num1 * num3 + num2) / num3, 6)
         elif not secondIndex == -1:  # 为分数时
             num1 = int(strAns[:secondIndex])
             num2 = int(strAns[secondIndex + 1:])
-            ans = round(num1 / num2 , 6)
-            # print("所填写的答案等于:%f" %ans)
+            ans = round(num1 / num2, 6)
         else:  # 为整数时
-            ans = round(int(strAns) , 6)
-            # print("所填写的答案等于:%d" %ans)
+            ans = round(int(strAns), 6)
         # 得出题目表达式列表listExe的计算结果 calcExe
         # 先生成RPN
         rpn = RPNBuild(listExe)
-        # print(rpn)
         calcExe = CalcExe(rpn)
         # 比较结果
         if ans == calcExe:
@@ -115,12 +92,6 @@ def CheckAnswer(exePath, ansPath):
         print('\n')
         lineExe = fileExe.readline()  # 读取题目文件的下一行
         lineAns = fileAns.readline()  # 读取答案文件的下一行
-    '''
-    print("正确的题数:" + str(correctCount))
-    print(Correct)
-    print("错误的题数:" + str(wrongCount))
-    print(Wrong)
-    '''
     fileExe.close()
     fileAns.close()
     # 在Grade.txt内生成结果
@@ -160,9 +131,7 @@ def CalcExe(rpn):
         else:
             s1.push(item)
     calcExe = s1.pop()
-    # print("正确答案：")
-    # print(calcExe)
-    return round(calcExe,6)
+    return round(calcExe, 6)
 
 
 if __name__ == "__main__":
