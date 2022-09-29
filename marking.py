@@ -81,15 +81,15 @@ def CheckAnswer(exePath, ansPath):
             num1 = int(strAns[:firstIndex])
             num2 = int(strAns[firstIndex + 1:secondIndex])
             num3 = int(strAns[secondIndex + 1:])
-            ans = (num1 * num3 + num2) / num3
+            ans = round((num1 * num3 + num2) / num3 , 6)
             # print("所填写的答案等于:%f" %ans)
         elif not secondIndex == -1:  # 为分数时
             num1 = int(strAns[:secondIndex])
             num2 = int(strAns[secondIndex + 1:])
-            ans = num1 / num2
+            ans = round(num1 / num2 , 6)
             # print("所填写的答案等于:%f" %ans)
         else:  # 为整数时
-            ans = int(strAns)
+            ans = round(int(strAns) , 6)
             # print("所填写的答案等于:%d" %ans)
         # 得出题目表达式列表listExe的计算结果 calcExe
         # 先生成RPN
@@ -152,11 +152,11 @@ def CalcExe(rpn):
         else:
             s1.push(item)
     calcExe = s1.pop()
-    # print("正确答案：")
-    # print(calcExe)
-    return calcExe
+    print("正确答案：")
+    print(calcExe)
+    return round(calcExe,6)
 
 
 if __name__ == "__main__":
-    CheckAnswer("example_exercises.txt", "example_answers.txt")
-    # CheckAnswer("exercises.txt", "answers.txt")
+    # CheckAnswer("example_exercises.txt", "example_answers.txt")
+    CheckAnswer("exercises.txt", "answers.txt")
