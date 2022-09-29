@@ -6,9 +6,17 @@
 """
 from stack import Operator, Stack
 from generator import RPNBuild
+import os
 
 
 def CheckAnswer(exePath, ansPath):
+    # 判断两个文件是否存在
+    if not os.path.exists(exePath):
+        print("[-]题目路径不存在")
+        exit(0)
+    if not os.path.exists(ansPath):
+        print("[-]答案路径不存在")
+        exit(0)
     fileExe = open(exePath, "r", encoding="UTF-8")
     fileAns = open(ansPath, "r", encoding="UTF-8")
     lineExe = fileExe.readline()
@@ -152,8 +160,8 @@ def CalcExe(rpn):
         else:
             s1.push(item)
     calcExe = s1.pop()
-    print("正确答案：")
-    print(calcExe)
+    # print("正确答案：")
+    # print(calcExe)
     return round(calcExe,6)
 
 
