@@ -135,4 +135,4 @@ def CalcExe(rpn):
 
 if __name__ == "__main__":
     # CheckAnswer("example_exercises.txt", "example_answers.txt")
-    CheckAnswer("./测试样例/exer2", "./测试样例/ans2")
+    CheckAnswer("./测试样例/exer6.txt", "./测试样例/ans6.txt")
