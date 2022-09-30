@@ -6,6 +6,8 @@
 """
 import os.path
 import sys
+import generator
+import marking
 
 
 def ParaIn():  # 读取命令行参数并检查
@@ -51,7 +53,7 @@ def ParaIn():  # 读取命令行参数并检查
 def ParaCheck(exeCount, numRange, exePath, ansPath):
     if not ((exeCount and numRange and exePath is None and ansPath is None)
             or (exeCount is None and numRange is None and exePath and ansPath)):
-        #既不是 1 1 0 0 ， 也不是0 0 1 1 时 执行下面的语句
+        # 既不是 1 1 0 0 ， 也不是0 0 1 1 时 执行下面的语句
         print("[-]给定的参数不合法，无法识别要执行的功能")
         exit(0)
     elif exeCount is None and numRange is None:  # 为对答案的命令时，exeCount和numRange应为None，检查两个路径是否都不为None
@@ -65,4 +67,7 @@ def ParaCheck(exeCount, numRange, exePath, ansPath):
 
 if __name__ == "__main__":
     exeCount, numRange, exePath, ansPath = ParaIn()
-    pass
+    if exeCount and numRange:
+        generator.ExGenerator(exeCount, numRange)
+    else:
+        marking.CheckAnswer(exePath, ansPath)
